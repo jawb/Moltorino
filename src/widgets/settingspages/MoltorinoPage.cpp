@@ -45,11 +45,13 @@
 #include <QMap>
 #include <QMessageBox>
 #include <QPointer>
+#include <QProxyStyle>
 #include <QPushButton>
 #include <QSet>
 #include <QSignalBlocker>
 #include <QSizePolicy>
 #include <QStackedWidget>
+#include <QStyleOption>
 #ifndef Q_OS_MACOS
 #    include <QSystemTrayIcon>
 #endif
@@ -70,6 +72,53 @@
 namespace {
 
 constexpr auto DEVICE_CODE_PLACEHOLDER = "--------";
+
+// Draws an editable combo box like a non-editable one. Otherwise it gets a
+// separate text field and arrow button, which looks off next to the plain
+// dropdowns around it. The line edit still sits on top for typing.
+class PlainComboBoxStyle : public QProxyStyle
+{
+public:
+    explicit PlainComboBoxStyle(const QString &name)
+        : QProxyStyle(name)
+    {
+    }
+
+    static void applyTo(QComboBox *combo)
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 1, 0)
+        auto styleName = combo->style()->name();
+#else
+        QString styleName = "fusion";
+#endif
+        auto *style = new PlainComboBoxStyle(styleName);
+        style->setParent(combo);
+        combo->setStyle(style);
+
+        // The line edit paints its own darker background and has no left
+        // padding, so it still stood out inside the plain-looking box
+        combo->lineEdit()->setStyleSheet(
+            "background: transparent; border: none; padding-left: 3px;");
+    }
+
+    void drawComplexControl(ComplexControl control,
+                            const QStyleOptionComplex *option,
+                            QPainter *painter,
+                            const QWidget *widget = nullptr) const override
+    {
+        const auto *comboOption =
+            qstyleoption_cast<const QStyleOptionComboBox *>(option);
+        if (control != CC_ComboBox || comboOption == nullptr)
+        {
+            QProxyStyle::drawComplexControl(control, option, painter, widget);
+            return;
+        }
+
+        auto plain = *comboOption;
+        plain.editable = false;
+        QProxyStyle::drawComplexControl(control, &plain, painter, widget);
+    }
+};
 
 QString customAuthClipboardScript()
 {
@@ -2078,6 +2127,49 @@ MoltorinoPage::MoltorinoPage()
             false)
         ->setToolTip("Choose when the inline Delete action appears beside "
                      "messages sent by the selected account.");
+
+    const auto connectionMessageSeconds = [](const QString &text) {
+        if (text == "Right away")
+        {
+            return 0;
+        }
+        // "Never", or anything typed without a number in it
+        return fuzzyToInt(text, -1);
+    };
+    auto *hideConnectionMessages = view->addDropdown<int>(
+        "Hide connection messages",
+        {"Never", "Right away", "10s", "30s", "60s", "120s", "300s"},
+        s.hideConnectionMessagesAfter,
+        [](auto val) {
+            if (val < 0)
+            {
+                return QString("Never");
+            }
+            if (val == 0)
+            {
+                return QString("Right away");
+            }
+            return QString::number(val) + "s";
+        },
+        [connectionMessageSeconds](const auto &args) {
+            return connectionMessageSeconds(args.value);
+        },
+        true,
+        "Hides messages about the chat connection, like \"connected\", "
+        "\"disconnected\", \"joined channel\" and \"Server connection timed "
+        "out, reconnecting\", after this many seconds. You can also type your "
+        "own number of seconds.");
+    PlainComboBoxStyle::applyTo(hideConnectionMessages);
+    // Apply a typed value directly instead of letting the combo box append it
+    // to the preset list
+    hideConnectionMessages->setInsertPolicy(QComboBox::NoInsert);
+    QObject::connect(hideConnectionMessages->lineEdit(),
+                     &QLineEdit::editingFinished, this,
+                     [hideConnectionMessages, connectionMessageSeconds] {
+                         getSettings()->hideConnectionMessagesAfter =
+                             connectionMessageSeconds(
+                                 hideConnectionMessages->currentText());
+                     });
 
     SettingWidget::checkbox("Continuous background across splits",
                             s.continuousSplitBackground)
