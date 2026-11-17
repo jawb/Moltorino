@@ -44,7 +44,10 @@ jobs:
         run: |
           sudo apt update
           sudo DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install \
-            libbenchmark-dev gcovr gnupg
+            libbenchmark-dev gcovr gnupg \
+            nasm meson ninja-build pkg-config \
+            libwebkit2gtk-4.1-dev libjson-glib-dev libsecret-1-dev
+          bash .CI/build-video-dependencies.sh
 
       - name: Install httpbox
         run: |
@@ -59,7 +62,7 @@ jobs:
             -DBUILD_TESTS=On \
             -DBUILD_BENCHMARKS=On \
             -DBUILD_APP=OFF \
-            -DCMAKE_PREFIX_PATH="$Qt6_DIR/lib/cmake" \
+            -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX;$Qt6_DIR/lib/cmake" \
             -DCHATTERINO_STATIC_QT_BUILD=On \
             -DCHATTERINO_GENERATE_COVERAGE=On \
             -DCMAKE_BUILD_TYPE=Debug \
