@@ -51,7 +51,8 @@ jobs:
       - name: Install dependencies
         run: |
           # brew install openssl rapidjson p7zip create-dmg cmake boost hunspell
-          brew install openssl rapidjson p7zip create-dmg boost hunspell
+          brew install openssl rapidjson p7zip create-dmg boost hunspell meson ninja nasm pkg-config
+          bash .CI/build-video-dependencies.sh
 
       - name: Install httpbox
         run: |
@@ -70,6 +71,7 @@ jobs:
               -DBUILD_APP=OFF \
               -DUSE_PRECOMPILED_HEADERS=OFF \
               -DCHATTERINO_SPELLCHECK=On \
+              -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX" \
               ..
           make -j"$(sysctl -n hw.logicalcpu)"
 
