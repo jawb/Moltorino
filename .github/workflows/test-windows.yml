@@ -80,6 +80,8 @@ jobs:
         run: |
           conan --version
           conan profile detect -f
+          # patched libwebm recipe, see .CI/conan/libwebm/conanfile.py
+          conan export .CI/conan/libwebm --version 1.0.0.32
 
       - name: Install dependencies
         run: |
