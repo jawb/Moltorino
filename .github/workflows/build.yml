@@ -230,6 +230,8 @@ jobs:
           pip install conan==${{env.CONAN_VERSION}}
           conan --version
           conan profile detect -f
+          # patched libwebm recipe, see .CI/conan/libwebm/conanfile.py
+          conan export .CI/conan/libwebm --version 1.0.0.32
         shell: bash
 
       - name: Install dependencies (Windows)
