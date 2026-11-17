@@ -137,9 +137,10 @@ cd "$here/usr"
 exec "$here/usr/bin/'"$app_executable"'" "$@"' > appdir/AppRun
 chmod a+x appdir/AppRun
 
+# -name only matches the basename, so strip the ./ prefix from the tool paths
 find . -maxdepth 1 -type f -name '*.AppImage' \
-    ! -name "$linuxdeployqt_path" \
-    ! -name "$appimagetool_path" \
+    ! -name "$(basename "$linuxdeployqt_path")" \
+    ! -name "$(basename "$appimagetool_path")" \
     -delete
 export ARCH=x86_64
 "$appimagetool_path" \
@@ -147,8 +148,8 @@ export ARCH=x86_64
     appdir
 
 created_appimage=$(find . -maxdepth 1 -type f -name '*.AppImage' \
-    ! -name "$linuxdeployqt_path" \
-    ! -name "$appimagetool_path" \
+    ! -name "$(basename "$linuxdeployqt_path")" \
+    ! -name "$(basename "$appimagetool_path")" \
     ! -name "${app_executable}-x86_64.AppImage" \
     | head -n 1)
 if [ -n "$created_appimage" ]; then
