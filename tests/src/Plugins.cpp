@@ -104,6 +104,12 @@ public:
         return &this->plugins;
     }
 
+    // c2.windows is nil in tests
+    WindowManager *getWindows() override
+    {
+        return nullptr;
+    }
+
     CommandController *getCommands() override
     {
         return &this->commands;
