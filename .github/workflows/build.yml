@@ -404,7 +404,7 @@ jobs:
               done
           # Fix the search path for lib{crypto,ssl} in chatterino
           otool -L Moltorino7.app/Contents/MacOS/Moltorino7 \
-            | grep -E '/opt/.*(libssl|libcrypto)' \
+            | { grep -E '/opt/.*(libssl|libcrypto)' || true; } \
             | cut -d" " -f1 \
             | cut -f2 \
             | while read og_entry; do \
