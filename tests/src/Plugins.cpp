@@ -197,7 +197,7 @@ public:
         getApp()->getPlugins()->openLibrariesFor(plugin);
     }
 
-    static std::map<QString, std::unique_ptr<Plugin>> &plugins()
+    static std::map<QString, AnyPlugin> &plugins()
     {
         return getApp()->getPlugins()->plugins_;
     }

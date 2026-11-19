@@ -122,12 +122,65 @@ public:
                  HelixFailureCallback failureCallback),
                 (override));
 
-    MOCK_METHOD(
-        void, updateChannel,
-        (QString broadcasterId, QString gameId, QString language, QString title,
-         std::function<void(NetworkResult)> successCallback,
-         (FailureCallback<HelixUpdateChannelError, QString> failureCallback)),
-        (override));
+    void updateChannel(QString /*broadcasterId*/,
+                       const HelixChannelUpdate & /*update*/,
+                       std::function<void(NetworkResult)> /*successCallback*/,
+                       FailureCallback<HelixUpdateChannelError, QString>
+                       /*failureCallback*/) override
+    {
+    }
+
+    void getChannelFollowDate(QString /*broadcasterID*/, QString /*userID*/,
+                              QString /*clientID*/, QString /*oauthToken*/,
+                              const QObject * /*caller*/,
+                              ResultCallback<QDateTime> /*successCallback*/,
+                              HelixFailureCallback /*failureCallback*/) override
+    {
+    }
+
+    void pinChatMessage(const QString & /*broadcasterID*/,
+                        const QString & /*moderatorID*/,
+                        const QString & /*messageID*/,
+                        std::optional<std::chrono::seconds> /*duration*/,
+                        ResultCallback<> /*successCallback*/,
+                        FailureCallback<HelixPinMessageError, QString>
+                        /*failureCallback*/) override
+    {
+    }
+
+    void updatePinnedChatMessage(
+        const QString & /*broadcasterID*/, const QString & /*moderatorID*/,
+        const QString & /*messageID*/,
+        std::optional<std::chrono::seconds> /*duration*/,
+        ResultCallback<> /*successCallback*/,
+        FailureCallback<HelixPinMessageError, QString> /*failureCallback*/)
+        override
+    {
+    }
+
+    void unpinChatMessage(const QString & /*broadcasterID*/,
+                          const QString & /*moderatorID*/,
+                          const QString & /*messageID*/,
+                          ResultCallback<> /*successCallback*/,
+                          FailureCallback<HelixPinMessageError, QString>
+                          /*failureCallback*/) override
+    {
+    }
+
+    void getSharedChatSession(
+        QString /*broadcasterID*/,
+        ResultCallback<HelixSharedChatSession> /*successCallback*/,
+        FailureCallback<HelixGetSharedChatSessionError, QString>
+        /*failureCallback*/) override
+    {
+    }
+
+    void getModeratedChannels(
+        QString /*userID*/, ResultCallback<QSet<QString>> /*successCallback*/,
+        FailureCallback<QString> /*failureCallback*/,
+        CancellationToken && /*token*/) override
+    {
+    }
 
     MOCK_METHOD(void, manageAutoModMessages,
                 (QString userID, QString msgID, QString action,

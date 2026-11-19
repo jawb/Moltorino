@@ -1,10 +1,12 @@
 #pragma once
 
 #include "common/Args.hpp"
+#include "common/Modes.hpp"
 #include "mocks/DisabledStreamerMode.hpp"
 #include "mocks/EmptyApplication.hpp"
 #include "mocks/TwitchUsers.hpp"
 #include "providers/bttv/BttvLiveUpdates.hpp"
+#include "providers/twitch/PubSubManager.hpp"
 #include "singletons/Fonts.hpp"
 #include "singletons/Settings.hpp"
 #include "singletons/Theme.hpp"
@@ -20,7 +22,8 @@ class BaseApplication : public EmptyApplication
 {
 public:
     BaseApplication()
-        : settings(this->args, this->settingsDir.path(), /*isTest=*/true)
+        : settings(Modes::instance(), this->args, this->settingsDir.path(),
+                   {.isTest = true})
         , updates(this->paths_, this->settings)
         , theme(this->paths_)
         , fonts(this->settings)
@@ -29,7 +32,8 @@ public:
 
     explicit BaseApplication(const QString &settingsData)
         : EmptyApplication(settingsData)
-        , settings(this->args, this->settingsDir.path(), /*isTest=*/true)
+        , settings(Modes::instance(), this->args, this->settingsDir.path(),
+                   {.isTest = true})
         , updates(this->paths_, this->settings)
         , theme(this->paths_)
         , fonts(this->settings)
@@ -71,6 +75,12 @@ public:
         return nullptr;
     }
 
+    // TwitchChannel subscribes to PubSub signals when it's constructed
+    PubSub *getTwitchPubSub() override
+    {
+        return &this->basePubSub;
+    }
+
     Args args;
     Settings settings;
     Updates updates;
@@ -78,6 +88,7 @@ public:
     Theme theme;
     Fonts fonts;
     TwitchUsers twitchUsers;
+    PubSub basePubSub{"wss://127.0.0.1:9050"};
 };
 
 }  // namespace chatterino::mock
