@@ -29,11 +29,18 @@ jobs:
       - name: Install dependencies
         run: |
           sudo pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm qt6-base qt6-tools boost-libs qt6-imageformats qtkeychain-qt6 qt6-svg libnotify git boost cmake benchmark
+          sudo pacman -S --noconfirm qt6-base qt6-tools boost-libs qt6-imageformats qtkeychain-qt6 qt6-svg libnotify git boost cmake benchmark \
+            nasm meson ninja pkgconf perl webkit2gtk-4.1 json-glib libsecret
 
       - uses: actions/checkout@v6
         with:
           submodules: recursive
+
+      - name: Build video dependencies
+        run: |
+          # shasum lives in core_perl, which a non-login shell doesn't have on PATH
+          export PATH="$PATH:/usr/bin/core_perl"
+          bash .CI/build-video-dependencies.sh
 
       - name: Create build directory
         run: mkdir build-test
@@ -59,6 +66,7 @@ jobs:
             -DBUILD_TESTS=On \
             -DBUILD_BENCHMARKS=On \
             -DBUILD_APP=OFF \
+            -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX" \
             -DCMAKE_BUILD_TYPE=Debug \
             ..
         working-directory: build-test

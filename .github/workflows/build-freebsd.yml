@@ -47,11 +47,18 @@ jobs:
           arch: x86_64
           mem: ${{ steps.mem.outputs.mem_mb }}
           prepare: |
-            pkg install -y boost-libs git libnotify qt6-base qt6-svg qt6-5compat qt6-imageformats qtkeychain-qt6 cmake pkgconf
+            pkg install -y boost-libs git libnotify qt6-base qt6-svg qt6-5compat qt6-imageformats qtkeychain-qt6 cmake pkgconf \
+              bash curl gmake nasm meson ninja perl5 webkit2-gtk_41 json-glib libsecret
           run: |
             git config --global --add safe.directory "$GITHUB_WORKSPACE"
             git submodule init
             git submodule update
+            # outside the checkout, so the clean git check still passes
+            export MOLTORINO_VIDEO_WORKSPACE=/tmp/video-dependencies
+            export MOLTORINO_VIDEO_PREFIX=/tmp/video-dependencies/install
+            # libvpx's configure looks for gcc by default
+            export CC=cc CXX=c++
+            bash .CI/build-video-dependencies.sh
             mkdir build
             cd build
             c++ --version
@@ -66,6 +73,8 @@ jobs:
                 -DCMAKE_BUILD_TYPE="release" \
                 -DCMAKE_EXPORT_COMPILE_COMMANDS="ON" \
                 -DSKIP_JSON_GENERATION="ON" \
+                -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX" \
+                -DMOLTORINO_MEDIA_TOOLS_DIR="$MOLTORINO_VIDEO_PREFIX/support/media" \
                 ..
             cat compile_commands.json
             make -j $(getconf _NPROCESSORS_ONLN)
