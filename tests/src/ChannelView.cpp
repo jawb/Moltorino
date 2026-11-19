@@ -57,9 +57,11 @@ TEST(ChannelViewTest, GoToBottomGeometryUpdatesWhenScaleChanges)
     auto *label = button->findChild<QLabel *>();
     ASSERT_NE(label, nullptr);
 
+    // the label starts with the system font until the first scale change
+    view.setOverrideScale(1.25F);
+
     const auto initialHeight = button->height();
     const auto initialScrollbarWidth = scrollbar->width();
-    // pixel metrics on the minimal platform round differently on macOS
     const auto initialLabelFontSize = label->font().pointSizeF();
 
     view.setOverrideScale(1.5F);
