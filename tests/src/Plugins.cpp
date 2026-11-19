@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 Contributors to Chatterino <https://chatterino.com>
+﻿// SPDX-FileCopyrightText: 2024 Contributors to Chatterino <https://chatterino.com>
 //
 // SPDX-License-Identifier: MIT
 
@@ -954,39 +954,60 @@ TEST_F(PluginTest, MessageElementFlag)
         out = table.concat(values, ",")
     )lua");
 
-    const char *VALUES = "AlwaysShow=0x2000000,"
+    const char *VALUES = "AbnormalClientNonce=0x4000000000,"
+                         "AlwaysShow=0x2000000,"
+                         "AnnouncementHeader=0x100000000000000,"
+                         "AutoModReviewCompact=0x80000000,"
+                         "AutoModReviewExpanded=0x40000000,"
+                         "BadgeBadgeHQ=0x400000000000,"
+                         "BadgeBluzyrino=0x80000000000,"
                          "BadgeBttv=0x40,"
                          "BadgeChannelAuthority=0x8000,"
                          "BadgeChatterino=0x40000,"
                          "BadgeFfz=0x80000,"
+                         "BadgeFfzAp=0x20000000000,"
                          "BadgeGlobalAuthority=0x2000,"
+                         "BadgeHomiesCustom=0x800000000,"
+                         "BadgeHomiesSupporter=0x80,"
+                         "BadgeJilChat=0x100000000000,"
+                         "BadgeMoltorino=0x400000000,"
                          "BadgePredictions=0x4000,"
                          "BadgeSevenTV=0x1000000000,"
                          "BadgeSharedChannel=0x2000000000,"
                          "BadgeSubscription=0x10000,"
                          "BadgeVanity=0x20000,"
+                         "BadgeWydios=0x200000000000,"
                          "BitsAmount=0x200000,"
                          "BitsAnimated=0x1000,"
                          "BitsStatic=0x800,"
+                         "ChannelAvatar=0x20000000000000,"
                          "ChannelName=0x100000,"
                          "ChannelPointReward=0x100,"
+                         "ChannelPointRewardHeader=0x8000000000,"
                          "Collapsed=0x4000000,"
                          "EmojiImage=0x800000,"
                          "EmojiText=0x1000000,"
                          "EmoteImage=0x10,"
                          "EmoteText=0x20,"
+                         "HeaderTimestamp=0x80000000000000,"
+                         "IgnoreExactMatch=0x40000000000,"
                          "KickUsername=0x4000000000000,"
                          "LowercaseLinks=0x20000000,"
                          "Mention=0x8000000,"
                          "Misc=0x1,"
                          "ModeratorTools=0x400000,"
+                         "NoUsernamePaint=0x40000000000000,"
                          "PlatformBadgeAlways=0x8000000000000,"
                          "PlatformBadgeIfUnselected=0x10000000000000,"
+                         "Pronouns=0x10000000000,"
+                         "RepeatedMessageCounter=0x10000000,"
                          "RepliedMessage=0x100000000,"
                          "ReplyButton=0x200000000,"
+                         "SubscriptionHeader=0x200000000000000,"
                          "Text=0x2,"
                          "Timestamp=0x8,"
-                         "Username=0x4";
+                         "Username=0x4,"
+                         "WatchStreakHeader=0x400000000000000";
 
     std::string got = (*lua)["out"];
     ASSERT_EQ(got, VALUES);

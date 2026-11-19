@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "common/Literals.hpp"
+#include "IrcMessages.hpp"
 #include "controllers/accounts/AccountController.hpp"
 #include "controllers/highlights/HighlightController.hpp"
 #include "messages/Emote.hpp"
@@ -18,7 +19,6 @@
 #include "providers/chatterino/ChatterinoBadges.hpp"
 #include "providers/ffz/FfzBadges.hpp"
 #include "providers/ffz/FfzEmotes.hpp"
-#include "providers/recentmessages/Impl.hpp"
 #include "providers/seventv/SeventvBadges.hpp"
 #include "providers/seventv/SeventvEmotes.hpp"
 #include "providers/seventv/SeventvPersonalEmotes.hpp"
@@ -246,8 +246,7 @@ public:
     {
         for (auto _ : state)
         {
-            auto parsed = recentmessages::detail::parseRecentMessages(
-                this->messages.object());
+            auto parsed = bench::parseIrcMessages(this->messages.object());
             benchmark::DoNotOptimize(parsed);
         }
     }
@@ -263,12 +262,10 @@ public:
 
     void run(benchmark::State &state)
     {
-        auto parsed = recentmessages::detail::parseRecentMessages(
-            this->messages.object());
+        auto parsed = bench::parseIrcMessages(this->messages.object());
         for (auto _ : state)
         {
-            auto built = recentmessages::detail::buildRecentMessages(
-                parsed, &this->chan);
+            auto built = bench::buildIrcMessages(parsed, &this->chan);
             benchmark::DoNotOptimize(built);
         }
     }

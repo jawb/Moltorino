@@ -377,17 +377,22 @@ TEST_F(FiltersF, TypingContextChecks)
         {"author.subbed", true},
         {"author.user_id", u"11148817"_s},
 
+        {"bits.amount", 0},
+
         {"channel.live", false},
         {"channel.name", u"pajlada"_s},
         {"channel.watching", false},
 
         {"flags.action", true},
+        {"flags.announcement", false},
         {"flags.automod", false},
         {"flags.cheer_message", false},
         {"flags.elevated_message", false},
+        {"flags.emote_only", true},
         {"flags.first_message", false},
         {"flags.highlighted", false},
         {"flags.hype_chat", false},
+        {"flags.moderation_action", false},
         {"flags.monitored", false},
         {"flags.points_redeemed", false},
         {"flags.reply", false},

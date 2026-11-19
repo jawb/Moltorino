@@ -12,6 +12,7 @@ set(benchmark_SOURCES
     src/RecentMessages.cpp
     src/MessageBuilding.cpp
     src/Filters.cpp
+    src/IrcMessages.hpp
     # Add your new file above this line!
     )
 

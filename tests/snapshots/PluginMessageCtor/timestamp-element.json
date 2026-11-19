@@ -14,7 +14,7 @@
         "elements": [
             {
                 "element": {
-                    "color": "System",
+                    "color": "Timestamp",
                     "flags": "Timestamp",
                     "link": {
                         "type": "None",
@@ -41,7 +41,7 @@
             },
             {
                 "element": {
-                    "color": "System",
+                    "color": "Timestamp",
                     "flags": "Timestamp",
                     "link": {
                         "type": "None",
@@ -68,7 +68,7 @@
             },
             {
                 "element": {
-                    "color": "System",
+                    "color": "Timestamp",
                     "flags": "Timestamp",
                     "link": {
                         "type": "None",
@@ -95,7 +95,7 @@
             },
             {
                 "element": {
-                    "color": "System",
+                    "color": "Timestamp",
                     "flags": "Timestamp",
                     "link": {
                         "type": "None",

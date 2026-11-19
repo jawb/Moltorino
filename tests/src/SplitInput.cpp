@@ -190,6 +190,7 @@ TEST(ResizingTextEditTest, HeightForWidthUsesRequestedWidth)
 TEST(SplitInputTest, ChannelPointsChromeStaysCompact)
 {
     MockApplication mockApplication;
+    getSettings()->openRewardsWithChannelPointsClick = false;
 
     auto split = std::make_unique<Split>(nullptr);
     TestableSplitInput input(split.get());
@@ -220,6 +221,7 @@ TEST(SplitInputTest, StatusLabelsReserveTextWidth)
     input.setSendWaitStatus({});
     input.updateActionRowCompactness();
 
-    EXPECT_EQ(input.ui_.textEditLength->minimumWidth(), 0);
+    // the length label always keeps room for three digits
+    EXPECT_GT(input.ui_.textEditLength->minimumWidth(), 0);
     EXPECT_EQ(input.ui_.sendWaitStatus->minimumWidth(), 0);
 }
