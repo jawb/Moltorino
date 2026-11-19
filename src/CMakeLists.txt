@@ -1480,9 +1480,23 @@ if (BUILD_APP)
     if(NOT EXISTS "${MOLTORINO_MEDIA_TOOLS_DIR}/licenses")
         message(FATAL_ERROR "The background converter license directory is missing.")
     endif()
-    add_custom_command(TARGET ${EXECUTABLE_PROJECT} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory "${MOLTORINO_MEDIA_TOOLS_DIR}"
-            "$<TARGET_FILE_DIR:${EXECUTABLE_PROJECT}>/support/media" VERBATIM)
+    if(APPLE)
+        # codesign rejects anything in Contents/MacOS that isn't code, so the
+        # license texts go to Contents/Resources
+        add_custom_command(TARGET ${EXECUTABLE_PROJECT} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:${EXECUTABLE_PROJECT}>/support/media"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${MOLTORINO_MEDIA_TOOLS_DIR}/ffmpeg" "${MOLTORINO_MEDIA_TOOLS_DIR}/ffprobe"
+                "$<TARGET_FILE_DIR:${EXECUTABLE_PROJECT}>/support/media"
+            COMMAND ${CMAKE_COMMAND} -E copy_directory "${MOLTORINO_MEDIA_TOOLS_DIR}/licenses"
+                "$<TARGET_BUNDLE_CONTENT_DIR:${EXECUTABLE_PROJECT}>/Resources/licenses/media"
+            VERBATIM)
+    else()
+        add_custom_command(TARGET ${EXECUTABLE_PROJECT} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory "${MOLTORINO_MEDIA_TOOLS_DIR}"
+                "$<TARGET_FILE_DIR:${EXECUTABLE_PROJECT}>/support/media" VERBATIM)
+    endif()
     if(WIN32)
         set(media_install_dir support/media)
         add_custom_command(TARGET ${EXECUTABLE_PROJECT} POST_BUILD
@@ -1496,13 +1510,18 @@ if (BUILD_APP)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MOLTORINO_WEBVIEW2_LICENSE}"
                     "$<TARGET_FILE_DIR:${EXECUTABLE_PROJECT}>/licenses/WebView2.txt" VERBATIM)
         endif()
-    elseif(APPLE)
-        set(media_install_dir bin/Moltorino7.app/Contents/MacOS/support/media)
-    else()
+    elseif(NOT APPLE)
         set(media_install_dir bin/support/media)
     endif()
-    install(DIRECTORY "${MOLTORINO_MEDIA_TOOLS_DIR}/" DESTINATION "${media_install_dir}"
-        USE_SOURCE_PERMISSIONS)
+    if(APPLE)
+        install(PROGRAMS "${MOLTORINO_MEDIA_TOOLS_DIR}/ffmpeg" "${MOLTORINO_MEDIA_TOOLS_DIR}/ffprobe"
+            DESTINATION bin/Moltorino7.app/Contents/MacOS/support/media)
+        install(DIRECTORY "${MOLTORINO_MEDIA_TOOLS_DIR}/licenses/"
+            DESTINATION bin/Moltorino7.app/Contents/Resources/licenses/media)
+    else()
+        install(DIRECTORY "${MOLTORINO_MEDIA_TOOLS_DIR}/" DESTINATION "${media_install_dir}"
+            USE_SOURCE_PERMISSIONS)
+    endif()
 
     if (WIN32)
         if (WINDEPLOYQT_PATH)
