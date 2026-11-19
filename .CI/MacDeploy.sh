@@ -81,6 +81,17 @@ else
     echo "No kimageformats archive provided; relying on Qt imageformats."
 fi
 
+if [ -n "$MACOS_CODESIGN_CERTIFICATE" ]; then
+    # macdeployqt only signs what it deploys, so sign the bundled media tools
+    # first or the app signature fails on them
+    for _tool in "${_app_bundle}"/Contents/MacOS/support/media/*; do
+        if [ -f "${_tool}" ] && [ -x "${_tool}" ]; then
+            echo "Codesigning $(basename "${_tool}")"
+            codesign -s "$MACOS_CODESIGN_CERTIFICATE" --force "${_tool}"
+        fi
+    done
+fi
+
 macdeployqt "${_app_bundle}" "${_macdeployqt_args[@]}" -verbose=1
 
 if [ -n "$MACOS_CODESIGN_CERTIFICATE" ]; then
