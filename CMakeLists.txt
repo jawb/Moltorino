@@ -208,6 +208,11 @@ if(MSVC)
     add_compile_options("$<${_moltorino_public_config}:/experimental:deterministic>")
 endif()
 
+if(BUILD_TESTS)
+    # the snapshot tests locate their data through __FILE__
+    set(_moltorino_pathmap_pairs)
+endif()
+
 foreach(_moltorino_pathmap_pair IN LISTS _moltorino_pathmap_pairs)
     if(MSVC)
         add_compile_options("$<${_moltorino_public_config}:/pathmap:${_moltorino_pathmap_pair}>")

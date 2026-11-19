@@ -46,5 +46,5 @@ TEST(Updates, ValidateCurrentVersion)
     EXPECT_NO_THROW([[maybe_unused]] auto v = semver::from_string(
                         Version::instance().version().toStdString()))
         << "Current version must be valid semver";
-    EXPECT_EQ(Version::instance().version(), CHATTERINO_VERSION);
+    EXPECT_EQ(Version::instance().version(), MOLTORINO_VERSION);
 }
