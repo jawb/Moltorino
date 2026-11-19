@@ -428,7 +428,8 @@ bool shouldSuppressHighlightAlert(const Channel *channel)
         return true;
     }
 
-    if (getApp()->getWindows()->shouldSuppressTabGroupAlerts(channel))
+    if (!getApp()->isTest() &&
+        getApp()->getWindows()->shouldSuppressTabGroupAlerts(channel))
     {
         return true;
     }
@@ -1469,7 +1470,8 @@ void MessageBuilder::triggerHighlights(const Channel *channel,
     actuallyTriggerHighlights(channelName, alert.playSound,
                               alert.customSound, alert.windowAlert);
 
-    if (alert.playSound)
+    // tests run without a window manager
+    if (alert.playSound && !getApp()->isTest())
     {
         getApp()->getWindows()->notifyTrayHighlight(channel, message, true);
     }
