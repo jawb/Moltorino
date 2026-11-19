@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           # brew install openssl rapidjson p7zip create-dmg cmake boost hunspell
-          brew install openssl rapidjson p7zip create-dmg boost hunspell meson ninja nasm pkg-config
+          brew install openssl p7zip create-dmg boost hunspell meson ninja nasm pkg-config
           bash .CI/build-video-dependencies.sh
 
       - name: Install httpbox

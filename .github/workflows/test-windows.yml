@@ -85,10 +85,16 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # stops ffmpeg's configure from finding the .pc files conan generates
+          Remove-Item Env:PKG_CONFIG_PATH -ErrorAction SilentlyContinue
           mkdir build-test
           cd build-test
+          # dav1d doesn't build with the VS 2026 toolset (14.5x), so build the
+          # dependencies with the VS 2022 one (14.4x) that ships alongside it
           conan install .. `
               -s build_type=RelWithDebInfo `
+              -s compiler.version=194 `
+              -c tools.microsoft.msbuild:vs_version=18 `
               -c tools.cmake.cmaketoolchain:generator="NMake Makefiles" `
               -b missing `
               --output-folder=. `

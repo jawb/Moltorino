@@ -148,11 +148,17 @@ jobs:
             qt-version: 6.9.3
             force-lto: true
             skip-artifact: false
+          # macOS (Intel)
+          - os: macos-15-intel
+            qt-version: 6.9.3
+            force-lto: true
+            skip-artifact: false
 
       fail-fast: false
     env:
       C2_ENABLE_LTO: ${{ matrix.force-lto }}
-      C2_ARCH: ${{ case(endsWith(matrix.os, '-arm') || startsWith(matrix.os, 'macos'), 'arm', 'x86-64') }}
+      C2_ARCH: ${{ case(endsWith(matrix.os, '-arm') || matrix.os == 'macos-latest', 'arm', 'x86-64') }}
+      C2_MACOS_ARCH: ${{ case(matrix.os == 'macos-15-intel', 'x86_64', 'arm64') }}
 
     steps:
       - uses: actions/checkout@v6
@@ -239,13 +245,24 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install .. \
+          # dav1d doesn't build with the VS 2026 toolset (14.5x), so build the
+          # dependencies with the VS 2022 one (14.4x) that ships alongside it
+          ls "$VCINSTALLDIR/Tools/MSVC" || true
+          # setup-python points this at its own folder, which stops ffmpeg's
+          # configure from finding the .pc files conan generates
+          unset PKG_CONFIG_PATH
+          if ! conan install .. \
               -s build_type=RelWithDebInfo \
+              -s compiler.version=194 \
+              -c tools.microsoft.msbuild:vs_version=18 \
               -c tools.cmake.cmaketoolchain:generator="Ninja" \
               -b missing \
               -c tools.build:jobs=4 \
               --output-folder=. \
-              -o with_openssl3=True
+              -o with_openssl3=True; then
+            find ~/.conan2/p/b -path '*ffbuild/config.log' -exec tail -n 60 {} \; 2>/dev/null || true
+            exit 1
+          fi
           conan cache clean --source --build --download "*"
         shell: bash
 
@@ -304,10 +321,11 @@ jobs:
       - name: Install dependencies (MacOS)
         if: startsWith(matrix.os, 'macos')
         run: |
-          # binary dependencies
-          ./.CI/SetupHomebrewDeps.sh boost openssl webp
-          # build and header-only dependencies
-          brew install rapidjson p7zip create-dmg tree meson ninja nasm pkg-config
+          # Homebrew no longer installs under Rosetta, so each runner builds
+          # for its own architecture instead of a universal app
+          # rapidjson comes from lib/rapidjson; Homebrew's copy in /usr/local/include
+          # would shadow it on Intel and fails -Werror
+          brew install boost openssl@3 webp p7zip create-dmg tree meson ninja nasm pkg-config
           MACOSX_DEPLOYMENT_TARGET=13.0 bash .CI/build-video-dependencies.sh
         shell: bash
 
@@ -322,11 +340,12 @@ jobs:
               -DUSE_PRECOMPILED_HEADERS=OFF \
               -DCHATTERINO_LTO="$C2_ENABLE_LTO" \
               -DCHATTERINO_NO_AVIF_PLUGIN=On \
-              -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+              -DCMAKE_OSX_ARCHITECTURES="$C2_MACOS_ARCH" \
+              -DOPENSSL_ROOT_DIR="$(brew --prefix openssl@3)" \
               -DFORCE_JSON_GENERATION=Off \
               -DCHATTERINO_NIGHTLY_BUILD=${{ steps.build-type.outputs.NIGHTLY_BUILD }} \
               -DMOLTORINO_VELOPACK=Off \
-              -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX" \
+              -DCMAKE_PREFIX_PATH="$MOLTORINO_VIDEO_PREFIX;$(brew --prefix)" \
               -DMOLTORINO_MEDIA_TOOLS_DIR="$MOLTORINO_VIDEO_PREFIX/support/media" \
               ..
           cmake --build . --parallel 4
@@ -335,7 +354,7 @@ jobs:
       - name: Package (MacOS)
         if: startsWith(matrix.os, 'macos')
         env:
-          OUTPUT_DMG_PATH: chatterino-macos-Qt-${{ matrix.qt-version}}-universal.dmg
+          OUTPUT_DMG_PATH: chatterino-macos-Qt-${{ matrix.qt-version}}-${{ env.C2_MACOS_ARCH }}.dmg
         run: |
           set -ex
           ls -la
@@ -351,8 +370,10 @@ jobs:
           ./../.CI/MacDeploy.sh
 
           # Copy dynamic library dependencies into the Frameworks directory
-          cp /opt/universal-lib/libcrypto.dylib Moltorino7.app/Contents/Frameworks/libcrypto.3.dylib
-          cp /opt/universal-lib/libssl.dylib Moltorino7.app/Contents/Frameworks/libssl.3.dylib
+          openssl_lib="$(brew --prefix openssl@3)/lib"
+          cp -f "$openssl_lib/libcrypto.3.dylib" Moltorino7.app/Contents/Frameworks/libcrypto.3.dylib
+          cp -f "$openssl_lib/libssl.3.dylib" Moltorino7.app/Contents/Frameworks/libssl.3.dylib
+          chmod u+w Moltorino7.app/Contents/Frameworks/libcrypto.3.dylib Moltorino7.app/Contents/Frameworks/libssl.3.dylib
 
           ls -la Moltorino7.app/Contents/Frameworks
 
@@ -374,7 +395,7 @@ jobs:
               done
           # Fix the search path for lib{crypto,ssl} in chatterino
           otool -L Moltorino7.app/Contents/MacOS/Moltorino7 \
-            | grep /opt \
+            | grep -E '/opt/.*(libssl|libcrypto)' \
             | cut -d" " -f1 \
             | cut -f2 \
             | while read og_entry; do \
@@ -392,8 +413,8 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         uses: actions/upload-artifact@v7
         with:
-          name: chatterino-macos-Qt-${{ matrix.qt-version }}-universal.dmg
-          path: build/chatterino-macos-Qt-${{ matrix.qt-version }}-universal.dmg
+          name: chatterino-macos-Qt-${{ matrix.qt-version }}-${{ env.C2_MACOS_ARCH }}.dmg
+          path: build/chatterino-macos-Qt-${{ matrix.qt-version }}-${{ env.C2_MACOS_ARCH }}.dmg
 
   create-release:
     needs: [build-ubuntu-docker, build]
@@ -416,8 +437,9 @@ jobs:
       - name: Rename artifacts
         run: |
           ls -l
-          # Rename the macos build to indicate that it's for macOS 13.0 users
-          mv chatterino-macos-Qt-6.9.3-universal.dmg Chatterino-macOS-13.0-universal.dmg
+          # Rename the macos builds to indicate that they're for macOS 13.0 users
+          mv chatterino-macos-Qt-6.9.3-arm64.dmg Chatterino-macOS-13.0-arm64.dmg
+          mv chatterino-macos-Qt-6.9.3-x86_64.dmg Chatterino-macOS-13.0-x86_64.dmg
           # Rename Windows ARM64 to indicate that it's not well tested
           mv chatterino-windows-arm-Qt-6.9.3.zip Experimental-ARM64-chatterino-windows-Qt-6.9.3.zip
         working-directory: release-artifacts
