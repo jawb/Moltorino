@@ -275,7 +275,7 @@ jobs:
               -G Ninja `
               -DCMAKE_BUILD_TYPE=RelWithDebInfo `
               -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" `
-              -DUSE_PRECOMPILED_HEADERS=ON `
+              -DUSE_PRECOMPILED_HEADERS=${{ case(env.C2_ARCH == 'arm', 'OFF', 'ON') }} `
               -DBUILD_WITH_CRASHPAD=Off `
               -DCHATTERINO_LTO="$Env:C2_ENABLE_LTO" `
               -DFORCE_JSON_GENERATION=${{ env.C2_ARCH == 'arm' && 'Off' || 'On' }} `
@@ -318,6 +318,15 @@ jobs:
           path: build/bin/chatterino-${{ env.C2_ARCH }}-Qt-${{ matrix.qt-version }}.pdb.7z
 
       # MACOS
+      - name: Select Xcode (MacOS Intel)
+        if: matrix.os == 'macos-15-intel'
+        run: |
+          # the default Xcode 16 libc++ doesn't provide std::stop_token
+          ls -d /Applications/Xcode*.app
+          sudo xcode-select -s "$(ls -d /Applications/Xcode_[0-9]*.app | sort -V | tail -n 1)"
+          clang++ --version
+        shell: bash
+
       - name: Install dependencies (MacOS)
         if: startsWith(matrix.os, 'macos')
         run: |
