@@ -3,6 +3,7 @@
 #include "common/Args.hpp"
 #include "common/Modes.hpp"
 #include "mocks/DisabledStreamerMode.hpp"
+#include "controllers/twitch/LiveController.hpp"
 #include "mocks/EmptyApplication.hpp"
 #include "mocks/TwitchUsers.hpp"
 #include "providers/bttv/BttvLiveUpdates.hpp"
@@ -14,6 +15,14 @@
 #include <QString>
 
 namespace chatterino::mock {
+
+class NoopLiveController : public ITwitchLiveController
+{
+public:
+    void add(const std::shared_ptr<TwitchChannel> & /*newChannel*/) override
+    {
+    }
+};
 
 /**
  * BaseApplication intends to be a mock application with a few more sane defaults, but with less configurability
@@ -81,6 +90,11 @@ public:
         return &this->basePubSub;
     }
 
+    ITwitchLiveController *getTwitchLiveController() override
+    {
+        return &this->liveController;
+    }
+
     Args args;
     Settings settings;
     Updates updates;
@@ -89,6 +103,7 @@ public:
     Fonts fonts;
     TwitchUsers twitchUsers;
     PubSub basePubSub{"wss://127.0.0.1:9050"};
+    NoopLiveController liveController;
 };
 
 }  // namespace chatterino::mock

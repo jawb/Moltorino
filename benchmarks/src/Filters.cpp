@@ -4,8 +4,8 @@
 
 #include "common/Literals.hpp"
 #include "controllers/filters/FilterSet.hpp"
+#include "IrcMessages.hpp"
 #include "MessageBuilding.hpp"
-#include "providers/recentmessages/Impl.hpp"
 
 #include <benchmark/benchmark.h>
 #include <QFile>
@@ -29,10 +29,8 @@ public:
 
     void run(benchmark::State &state) override
     {
-        auto parsed = recentmessages::detail::parseRecentMessages(
-            this->messages.object());
-        auto built = recentmessages::detail::buildRecentMessages(
-            parsed, this->chan.get());
+        auto parsed = bench::parseIrcMessages(this->messages.object());
+        auto built = bench::buildIrcMessages(parsed, this->chan.get());
 
         QList<QUuid> filters;
         for (qsizetype i = 0; i < this->filterTexts.size(); i++)

@@ -112,7 +112,8 @@ TEST(Emojis, Parse)
                 break;
             }
         }
-        return emoji->emote;
+        // emotes are created on first use
+        return emojis.getEmote(emoji);
     };
 
     auto penguin = getEmoji("1F427");

@@ -899,6 +899,8 @@ TEST(Commands, E2E)
 
     EXPECT_CALL(mockHelix, update).Times(1);
     EXPECT_CALL(mockHelix, loadBlocks).Times(1);
+    // switching accounts reloads the channel's badges
+    EXPECT_CALL(mockHelix, getChannelBadges).Times(testing::AnyNumber());
 
     auto account = std::make_shared<TwitchAccount>(
         testaccount420["login"].toString(), "token", "oauthclient",

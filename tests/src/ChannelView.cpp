@@ -59,13 +59,14 @@ TEST(ChannelViewTest, GoToBottomGeometryUpdatesWhenScaleChanges)
 
     const auto initialHeight = button->height();
     const auto initialScrollbarWidth = scrollbar->width();
-    const auto initialLabelFontHeight = label->fontMetrics().height();
+    // pixel metrics on the minimal platform round differently on macOS
+    const auto initialLabelFontSize = label->font().pointSizeF();
 
     view.setOverrideScale(1.5F);
 
     EXPECT_GT(button->height(), initialHeight);
     EXPECT_GT(scrollbar->width(), initialScrollbarWidth);
-    EXPECT_GT(label->fontMetrics().height(), initialLabelFontHeight);
+    EXPECT_GT(label->font().pointSizeF(), initialLabelFontSize);
     EXPECT_EQ(label->font(), button->font());
     EXPECT_EQ(button->height(), int(view.scale() * 26));
     EXPECT_EQ(button->geometry().bottom(), view.rect().bottom());
