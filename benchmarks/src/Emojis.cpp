@@ -82,7 +82,8 @@ static void BM_EmojiParsing(benchmark::State &state)
                 break;
             }
         }
-        return emoji->emote;
+        // emotes are created on first use
+        return emojis.getEmote(emoji);
     };
     auto penguinEmoji = getEmoji("1F427");
     assert(penguinEmoji.get() != nullptr);

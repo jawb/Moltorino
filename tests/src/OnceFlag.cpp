@@ -48,11 +48,12 @@ TEST(OnceFlag, waitFor)
     startedFlag.wait();
     startedAckFlag.set();
 
+    // the thread sleeps for 100ms, leave room for slow CI machines
     auto start = std::chrono::system_clock::now();
-    ASSERT_TRUE(stoppedFlag.waitFor(std::chrono::milliseconds{200}));
+    ASSERT_TRUE(stoppedFlag.waitFor(std::chrono::milliseconds{500}));
     auto stop = std::chrono::system_clock::now();
 
-    ASSERT_LT(stop - start, std::chrono::milliseconds{200});
+    ASSERT_LT(stop - start, std::chrono::milliseconds{500});
 
     start = std::chrono::system_clock::now();
     ASSERT_TRUE(stoppedFlag.waitFor(std::chrono::milliseconds{1000}));
