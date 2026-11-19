@@ -40,7 +40,7 @@
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",

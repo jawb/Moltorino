@@ -8,7 +8,7 @@
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -22,7 +22,7 @@
                             "0:00"
                         ]
                     },
-                    "flags": "Timestamp",
+                    "flags": "Timestamp|ChannelPointRewardHeader",
                     "format": "",
                     "link": {
                         "type": "None",
@@ -156,7 +156,7 @@
                 },
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",

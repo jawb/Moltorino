@@ -34,13 +34,13 @@
     },
     "output": [
         {
-            "channelName": "",
+            "channelName": "pajlada",
             "count": 1,
             "displayName": "",
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",

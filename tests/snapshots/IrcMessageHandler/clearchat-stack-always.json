@@ -2,13 +2,13 @@
     "input": "@tmi-sent-ts=1736678514028;room-id=11148817;badges=;badge-info=;flags=;user-type=;emotes= :tmi.twitch.tv CLEARCHAT #pajlada",
     "output": [
         {
-            "channelName": "",
+            "channelName": "pajlada",
             "count": 4,
             "displayName": "",
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -97,7 +97,7 @@
                 },
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -121,6 +121,16 @@
                     "tooltip": "",
                     "trailingSpace": true,
                     "type": "TimestampElement"
+                },
+                {
+                    "flags": "ModeratorTools",
+                    "link": {
+                        "type": "None",
+                        "value": ""
+                    },
+                    "tooltip": "",
+                    "trailingSpace": true,
+                    "type": "TwitchModerationElement"
                 },
                 {
                     "emote": {
