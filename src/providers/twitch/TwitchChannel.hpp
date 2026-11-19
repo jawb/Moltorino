@@ -938,7 +938,8 @@ private:
     friend class TwitchChannelTestAccess;
     friend class ::TestIrcMessageHandlerP;
     friend class ::TestEventSubMessagesP;
-    friend class ::IrcMessageHandler_DuplicateChannelPointRewardIrcMessageIgnored_Test;
+    friend class ::
+        IrcMessageHandler_DuplicateChannelPointRewardIrcMessageIgnored_Test;
 
     QTimer sendWaitTimer_;
     // Timepoint at which the user can send messages again

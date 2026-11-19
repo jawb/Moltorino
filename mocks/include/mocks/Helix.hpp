@@ -175,10 +175,10 @@ public:
     {
     }
 
-    void getModeratedChannels(
-        QString /*userID*/, ResultCallback<QSet<QString>> /*successCallback*/,
-        FailureCallback<QString> /*failureCallback*/,
-        CancellationToken && /*token*/) override
+    void getModeratedChannels(QString /*userID*/,
+                              ResultCallback<QSet<QString>> /*successCallback*/,
+                              FailureCallback<QString> /*failureCallback*/,
+                              CancellationToken && /*token*/) override
     {
     }
 

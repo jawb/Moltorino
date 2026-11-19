@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "common/Literals.hpp"
-#include "IrcMessages.hpp"
 #include "controllers/accounts/AccountController.hpp"
 #include "controllers/highlights/HighlightController.hpp"
+#include "IrcMessages.hpp"
 #include "messages/Emote.hpp"
 #include "mocks/BaseApplication.hpp"
 #include "mocks/DisabledStreamerMode.hpp"
