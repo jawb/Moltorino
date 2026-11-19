@@ -2,8 +2,8 @@
 
 #include "common/Args.hpp"
 #include "common/Modes.hpp"
-#include "mocks/DisabledStreamerMode.hpp"
 #include "controllers/twitch/LiveController.hpp"
+#include "mocks/DisabledStreamerMode.hpp"
 #include "mocks/EmptyApplication.hpp"
 #include "mocks/TwitchUsers.hpp"
 #include "providers/bttv/BttvLiveUpdates.hpp"
