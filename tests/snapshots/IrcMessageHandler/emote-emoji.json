@@ -23,7 +23,7 @@
                 },
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -47,6 +47,16 @@
                     "tooltip": "",
                     "trailingSpace": true,
                     "type": "TimestampElement"
+                },
+                {
+                    "flags": "ModeratorTools",
+                    "link": {
+                        "type": "None",
+                        "value": ""
+                    },
+                    "tooltip": "",
+                    "trailingSpace": true,
+                    "type": "TwitchModerationElement"
                 },
                 {
                     "emote": {

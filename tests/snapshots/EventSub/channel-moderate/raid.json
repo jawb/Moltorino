@@ -45,7 +45,7 @@
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -123,21 +123,6 @@
                     "words": [
                         "BajLada"
                     ]
-                },
-                {
-                    "color": "System",
-                    "flags": "Text",
-                    "link": {
-                        "type": "None",
-                        "value": ""
-                    },
-                    "style": "ChatMedium",
-                    "tooltip": "",
-                    "trailingSpace": true,
-                    "type": "TextElement",
-                    "words": [
-                        "."
-                    ]
                 }
             ],
             "externalBadges": [
@@ -147,8 +132,8 @@
             "id": "",
             "localizedName": "",
             "loginName": "pajlada",
-            "messageText": "pajlada initiated a raid to bajlada. ",
-            "searchText": "pajlada initiated a raid to bajlada. ",
+            "messageText": "pajlada initiated a raid to bajlada",
+            "searchText": "pajlada initiated a raid to bajlada",
             "serverReceivedTime": "2024-05-14T12:31:47Z",
             "timeoutUser": "",
             "twitchBadgeInfos": {

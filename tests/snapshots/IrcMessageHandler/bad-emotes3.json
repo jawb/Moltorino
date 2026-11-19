@@ -23,7 +23,7 @@
                 },
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -63,7 +63,7 @@
                     "flags": "Username",
                     "link": {
                         "type": "UserInfo",
-                        "value": ""
+                        "value": "test"
                     },
                     "style": "ChatMediumBold",
                     "tooltip": "",

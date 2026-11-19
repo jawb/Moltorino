@@ -129,7 +129,7 @@
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
@@ -245,7 +245,7 @@
             "elements": [
                 {
                     "element": {
-                        "color": "System",
+                        "color": "Timestamp",
                         "flags": "Timestamp",
                         "link": {
                             "type": "None",
