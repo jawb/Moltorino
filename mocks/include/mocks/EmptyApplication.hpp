@@ -244,7 +244,6 @@ public:
 
     HomiesBadges *getHomiesBadges() override
     {
-        assert(!"getHomiesBadges was called without being initialized");
         return nullptr;
     }
 
