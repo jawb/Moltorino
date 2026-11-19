@@ -275,7 +275,7 @@ jobs:
               -G Ninja `
               -DCMAKE_BUILD_TYPE=RelWithDebInfo `
               -DCMAKE_TOOLCHAIN_FILE="conan_toolchain.cmake" `
-              -DUSE_PRECOMPILED_HEADERS=${{ case(env.C2_ARCH == 'arm', 'OFF', 'ON') }} `
+              -DUSE_PRECOMPILED_HEADERS=OFF `
               -DBUILD_WITH_CRASHPAD=Off `
               -DCHATTERINO_LTO="$Env:C2_ENABLE_LTO" `
               -DFORCE_JSON_GENERATION=${{ env.C2_ARCH == 'arm' && 'Off' || 'On' }} `
